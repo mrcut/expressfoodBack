@@ -1,69 +1,86 @@
-# Backend MERN (MongoDB, Express, React, Node.js)
+# ExpressFood — API Node.js / Express / MongoDB
 
-Bienvenue dans le référentiel du backend de notre projet MERN ! Ce référentiel contient le code source nécessaire pour gérer les routes API qui interagissent avec notre base de données MongoDB. Notre objectif est de construire une application web à part entière utilisant la stack MERN (MongoDB, Express, React, Node.js), où chaque composant contribue à offrir une expérience utilisateur exceptionnelle.
+Backend du projet collectif ExpressFood, une application de commande de repas. Il fournit les routes de gestion des comptes, produits, commandes et livreurs consommées par le [frontend React](https://github.com/mrcut/expressFood).
 
-## Objectif
+**Stack :** Node.js, Express 4, MongoDB, Mongoose 7, bcrypt, jsonwebtoken, dotenv, node-cron.
 
-Ce projet vise à fournir une plateforme robuste et réactive pour gérer diverses fonctionnalités de notre application web. En utilisant les technologies MERN, nous visons à offrir une solution complète, de la gestion des données à l'interface utilisateur, en passant par la logique métier.
+## Fonctionnalités présentes
 
-## Technologies utilisées
+- Inscription et connexion ; vérification du mot de passe avec bcrypt et émission d’un JWT lors de la connexion.
+- Routes de gestion des utilisateurs, produits, commandes et livreurs.
+- Consultation des commandes par email.
+- Sélection de produits pour l’accueil et tâche planifiée quotidienne de renouvellement.
+- Middleware de vérification des jetons sur certaines routes.
 
-- **MongoDB**: Une base de données NoSQL flexible et évolutive, parfaite pour stocker et organiser nos données.
-- **Express**: Un framework web minimaliste pour Node.js, utilisé pour créer des applications web et des API RESTful.
-- **React**: Une bibliothèque JavaScript frontale pour construire des interfaces utilisateur interactives.
-- **Node.js**: Un environnement d'exécution JavaScript côté serveur, permettant d'exécuter notre code backend.
+Plusieurs routes de modification ne sont pas protégées dans `routes/api.js` et le middleware d’autorisation par rôle n’y est pas appliqué. Ce projet ne doit donc pas être présenté comme une API dont la sécurité de production a été validée. Les dépendances Redis et Swagger figurent dans `package.json`, mais aucune fonctionnalité de cache ni documentation Swagger opérationnelle n’est revendiquée ici.
 
-## Installation
+## Démarrage local
 
-1. Clonez ce référentiel sur votre machine locale en utilisant la commande suivante :
+Prérequis : Node.js / npm et une instance MongoDB accessible. Le dépôt ne fixe pas de version Node.
 
-   ```
-   git clone [https://github.com/votre-utilisateur/votre-repo-backend.git](https://github.com/Yikkme/ExpressFoodBack.git)
-   ```
-
-2. Accédez au répertoire du projet :
-
-   ```
-   cd ExpressFoodBack
-   ```
-
-3. Installez les dépendances nécessaires en utilisant npm :
-
-   ```
-   npm install 
-   npm install cron
-   
-   ```
-
-4. Configurez votre base de données MongoDB en ajoutant vos informations de connexion dans le fichier `.env`.
-
-## Utilisation
-
-Une fois que vous avez installé les dépendances et configuré votre base de données, vous pouvez démarrer le serveur en utilisant la commande suivante :
-
+```sh
+git clone https://github.com/mrcut/expressfoodBack.git
+cd expressfoodBack
+npm ci
 ```
+
+Créer un fichier `.env` local :
+
+```dotenv
+PORT=5003
+PORT_CLIENT=http://localhost:5173
+DB_URL=mongodb://127.0.0.1:27017
+TOKEN_KEY=REMPLACER_PAR_UN_SECRET_LOCAL_LONG_ET_ALEATOIRE
+```
+
+Remplacer la valeur d’exemple de `TOKEN_KEY` avant utilisation ; ne pas committer ce fichier. Le nom de base `ExpressFood` est fixé dans [bdd/connexion.js](bdd/connexion.js).
+
+```sh
 npm start
 ```
 
-Cela lancera le serveur backend et vous pourrez commencer à accéder à vos routes API.
+Lancer ensuite le [frontend](https://github.com/mrcut/expressFood#readme) sur le port 5173. Les routes sont montées directement à la racine de `http://localhost:5003`, sans préfixe `/api`.
 
-## Structure du projet
+### Données de démonstration
 
-- **/routes**: Ce répertoire contient les fichiers de définition des routes API pour différentes fonctionnalités de notre application.
-- **/controllers**: Ici, vous trouverez les contrôleurs qui définissent la logique métier pour chaque route API.
-- **/models**: Les modèles MongoDB sont définis dans ce répertoire, décrivant la structure des données stockées dans la base de données.
+Le dépôt ne fournit pas de jeu de données initial ni de compte préconfiguré. Créer un compte via le frontend et préparer des produits et des livreurs avec des données fictives. Un livreur au statut `free` est requis pour le parcours de commande. Le rôle `admin` permet d’accéder aux écrans d’administration du frontend, sans constituer une garantie de contrôle d’accès serveur.
 
-## Contribution
+## Routes utiles
 
-Les contributions sont les bienvenues ! Si vous souhaitez contribuer à ce projet, veuillez consulter les [CONTRIBUTING.md](CONTRIBUTING.md) pour obtenir des instructions détaillées sur la manière de contribuer.
+| Méthode | Route | Usage |
+| --- | --- | --- |
+| POST | `/Register` | Inscription |
+| POST | `/Login` | Connexion |
+| GET | `/ProductsList` | Catalogue |
+| GET | `/DeliverersList` | Liste des livreurs |
+| POST | `/OrderAdd` | Création d’une commande |
+| GET | `/Order/email/:userEmail` | Commandes par email |
 
-## Auteurs
+Voir [routes/api.js](routes/api.js) pour les autres routes et leurs protections effectives.
 
-- [Nicky](https://github.com/Yikkmee) - Développeur principal
-- [Abdellah](https://github.com/Mrcut) - Développeur principal
-- [Doua](https://github.com/Doua) - Chef de Projet
+## Organisation
 
+- `server.js` : démarrage, CORS et middlewares.
+- `routes/` : routes HTTP.
+- `controllers/` : traitements métier.
+- `models/` : schémas Mongoose.
+- `middlewares/` : vérification des jetons et fonction d’autorisation.
+- `util/cron.js` : tâche planifiée.
 
+## Aperçu à compléter
 
----
-Merci d'utiliser notre backend MERN ! Si vous avez des questions ou des commentaires, n'hésitez pas à nous contacter. Nous sommes ravis de vous avoir à bord !
+> Le rendu utilisateur se trouve dans le frontend. Captures réelles à ajouter après exécution : catalogue et commande avec données fictives. Aucun paiement en ligne ni suivi GPS n’est revendiqué.
+
+## Vérifications
+
+`npm start` lance le serveur et `npm run app` utilise nodemon. Le script `npm test` est un placeholder qui retourne une erreur : il ne constitue pas une suite de tests. Le démarrage n’a pas été exécuté lors de cette mise à jour documentaire.
+
+## Équipe
+
+Crédits conservés du README d’origine :
+
+- [Nicky](https://github.com/Yikkmee) — Développeur principal.
+- [Abdellah](https://github.com/Mrcut) — Développeur principal.
+- [Doua](https://github.com/Doua) — Chef de projet.
+
+La répartition individuelle des fonctionnalités n’est pas documentée ici ; ce projet est présenté comme un travail collectif.
