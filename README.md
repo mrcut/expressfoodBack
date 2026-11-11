@@ -16,7 +16,7 @@ Plusieurs routes de modification ne sont pas protégées dans `routes/api.js` et
 
 ## Démarrage local
 
-Prérequis : Node.js / npm et une instance MongoDB accessible. Le dépôt ne fixe pas de version Node.
+Prérequis : Node.js 24 / npm et une instance MongoDB accessible. Vercel utilise Node.js 24 pour rester compatible avec les dépendances actuelles.
 
 ```sh
 git clone https://github.com/mrcut/expressfoodBack.git
@@ -44,6 +44,20 @@ Lancer ensuite le [frontend](https://github.com/mrcut/expressFood#readme) sur le
 ### Données de démonstration
 
 Le dépôt ne fournit pas de jeu de données initial ni de compte préconfiguré. Créer un compte via le frontend et préparer des produits et des livreurs avec des données fictives. Un livreur au statut `free` est requis pour le parcours de commande. Le rôle `admin` permet d’accéder aux écrans d’administration du frontend, sans constituer une garantie de contrôle d’accès serveur.
+
+## Déploiement Vercel
+
+- Framework du projet : **Express** ; point d’entrée : `server.js`, exporté en CommonJS.
+- Node.js : **24.x**. Node.js 26 provoque une erreur dans une dépendance transitive de l’authentification actuelle.
+- Aucune commande de compilation ni dossier de sortie statique personnalisé.
+- Variables à définir pour Production : `DB_URL`, `TOKEN_KEY` et `PORT_CLIENT` (origine HTTPS exacte du frontend).
+- Redéployer après modification des variables. Ne jamais placer les secrets dans Git.
+- `GET /health` retourne 200 si MongoDB est connecté, sinon 503 avec un diagnostic JSON.
+- En l’absence de `DB_URL`, les routes métier retournent 503 `DATABASE_NOT_CONFIGURED`.
+
+Le planificateur `node-cron` est conservé en exécution locale uniquement : il n’est pas démarré dans les fonctions Vercel. Le renouvellement quotidien nécessiterait une tâche planifiée Vercel séparée.
+
+Le frontend actuel contient encore des URLs `http://localhost:5003`. Pour un usage depuis le site déployé, ces appels devront pointer vers l’URL HTTPS du backend ; cette adaptation est distincte du démarrage de l’API.
 
 ## Routes utiles
 
@@ -73,7 +87,7 @@ Voir [routes/api.js](routes/api.js) pour les autres routes et leurs protections 
 
 ## Vérifications
 
-`npm start` lance le serveur et `npm run app` utilise nodemon. Le script `npm test` est un placeholder qui retourne une erreur : il ne constitue pas une suite de tests. Le démarrage n’a pas été exécuté lors de cette mise à jour documentaire.
+`npm start` lance le serveur et `npm run app` utilise nodemon. Le script `npm test` est un placeholder qui retourne une erreur : il ne constitue pas une suite de tests. La publication Vercel a été testée : l’application Express répond en JSON. Le fonctionnement avec les données nécessite les variables de production et une connexion MongoDB valide.
 
 ## Équipe
 
