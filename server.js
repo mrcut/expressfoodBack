@@ -44,10 +44,13 @@ const databaseStatus = async () => {
     return null;
   } catch (error) {
     // Ne jamais journaliser l'URI de connexion ou les identifiants.
-    console.error("MongoDB connection failed", { name: error.name, code: error.code });
+    const authenticationFailed = error.code === 18 || /auth|credentials|password/i.test(error.message || "");
+    console.error("MongoDB connection failed", {
+      name: error.name, code: error.code, authenticationFailed,
+    });
     return error.code === "DATABASE_NOT_CONFIGURED"
       ? "DATABASE_NOT_CONFIGURED"
-      : error.code === 18 ? "DATABASE_AUTHENTICATION_FAILED" : "DATABASE_CONNECTION_FAILED";
+      : authenticationFailed ? "DATABASE_AUTHENTICATION_FAILED" : "DATABASE_CONNECTION_FAILED";
   }
 };
 app.get("/health", async (req, res) => {
