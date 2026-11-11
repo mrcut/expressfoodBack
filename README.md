@@ -41,9 +41,6 @@ npm start
 
 Lancer ensuite le [frontend](https://github.com/mrcut/expressFood#readme) sur le port 5173. Les routes sont montées directement à la racine de `http://localhost:5003`, sans préfixe `/api`.
 
-### Données de démonstration
-
-Le dépôt ne fournit pas de jeu de données initial ni de compte préconfiguré. Créer un compte via le frontend et préparer des produits et des livreurs avec des données fictives. Un livreur au statut `free` est requis pour le parcours de commande. Le rôle `admin` permet d’accéder aux écrans d’administration du frontend, sans constituer une garantie de contrôle d’accès serveur.
 
 ## Déploiement Vercel
 
@@ -81,20 +78,9 @@ Voir [routes/api.js](routes/api.js) pour les autres routes et leurs protections 
 - `middlewares/` : vérification des jetons et fonction d’autorisation.
 - `util/cron.js` : tâche planifiée.
 
-## Aperçu à compléter
-
-> Le rendu utilisateur se trouve dans le frontend. Captures réelles à ajouter après exécution : catalogue et commande avec données fictives. Aucun paiement en ligne ni suivi GPS n’est revendiqué.
-
-## Vérifications
-
-`npm start` lance le serveur et `npm run app` utilise nodemon. Le script `npm test` est un placeholder qui retourne une erreur : il ne constitue pas une suite de tests. La publication Vercel a été testée : l’application Express répond en JSON. Le fonctionnement avec les données nécessite les variables de production et une connexion MongoDB valide.
 
 ## Équipe
-
-Crédits conservés du README d’origine :
 
 - [Nicky](https://github.com/Yikkmee) — Développeur principal.
 - [Abdellah](https://github.com/Mrcut) — Développeur principal.
 - [Doua](https://github.com/Doua) — Chef de projet.
-
-La répartition individuelle des fonctionnalités n’est pas documentée ici ; ce projet est présenté comme un travail collectif.
